@@ -1,0 +1,29 @@
+1、C#调用C/C++的方法有三种：P/Invoke、C++/CLI、COM组件。
+
+2、P/Invoke，全称Platform Invoke，是C++编译后的机器码，也就是平台相关的代码。
+3、P/Invoke常用于调用C/C++库函数和Windows API，Visual Studio 2019中对应项目为C++的动态链接库。使用extern "C" __declspec(dllexport)前缀标识函数或者类的导出，编译生成dll。C#调用时需要将生成的dll复制到C#生成exe的目录下，在运行时动态加载，无法在编码时通过引用导入。
+
+4、C++/CLI是托管C++，编译成IL指令，运行时全部交给.NET虚拟机托管。
+5、C++/CLI对应Visual Studio 2019中的CLR项目，需要在项目属性中设置“公共语言运行时支持”。测试中使用.net core 3.1调用生成的dll时，“公共语言运行时支持”为“.NET Core Runtime Support (/clr:netcore)”时运行时崩溃，为普通“公共语言运行时支持(/clr)”即.net framework才可使用。生成的dll在VS2019中编码时由IDE作为依赖项引入，使用CSC命令时可在在编译时引入。
+
+6、COM组件，注册在系统中，由GUID标识，为所有程序提供的二进制接口。
+7、COM组件对应VS2019的ATL项目，在需要标识的地方尽量填写，不然会出现之后引入时找不到命名空间等错误。ATL项目建立后，需要右键项目->添加ATL简单对象（而不是C++类）->转换为类视图，在新添加的对象上右键，添加方法（而不是直接写声明之后实现）->在<简单对象名>.CPP中找到这个函数添加代码。
+
+
+Commands
+
+1. Install dll into GAC:
+gacutil /i C:\Users\xy\Desktop\GlobalAssemblyCustomZfile\GlobalAssemblyCustomZfile\bin\Release\netstandard2.0\GlobalAssemblyCustomZfile.dll;
+
+2. Uninstall dll from GAC:
+gacutil /u hello
+
+3. Get assembly full name:
+string path = @"gacutil /i C:\Users\xy\Desktop\GlobalAssemblyCustomZfile\GlobalAssemblyCustomZfile\bin\Release\netstandard2.0\GlobalAssemblyCustomZfile.dll";
+";
+var name = AssemblyName.GetAssemblyName(path);
+var fullname = name.FullName;
+Console.WriteLine(fullname);
+
+4. Load assembly during runtime:
+Assembly.Load(fullname);

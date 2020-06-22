@@ -13,15 +13,15 @@ namespace CustomZfile.Controllers
 	[ApiController]
 	public class FileController : ControllerBase
 	{
-		/**
-         * 滚动加载每页条数.
-         */
+		private SystemManager systemManager = new SystemManager();
+		private FileManager fileManager = new FileManager();
+
 		private const int PAGE_SIZE = 30;
 
 		[HttpGet("drive/list")]
 		public ResultBean ListDrives()
 		{
-			return ResultBean.Success(SystemManager.ListAllDrives());
+			return ResultBean.Success(systemManager.ListAllDrives());
 		}
 
 		[HttpGet("list/{driveId}")]
@@ -31,7 +31,7 @@ namespace CustomZfile.Controllers
 			{
 				path = "";
 			}
-			return ResultBean.Success(new { totalPage = 1, fileList = FileManager.ListFiles(driveId, path) });
+			return ResultBean.Success(new { totalPage = 1, fileList = fileManager.ListFiles(driveId, path) });
 		}
 
 		[HttpGet("config/{driveId}")]
@@ -49,13 +49,13 @@ namespace CustomZfile.Controllers
 		[HttpGet("/directlink/{driveId}")]
 		public ResultBean directlink(int driveId, string path)
 		{
-			return ResultBean.Success(FileManager.GetFileItem(driveId, path));
+			return ResultBean.Success(fileManager.GetFileItem(driveId, path));
 		}
 
 		[HttpGet("audio-info")]
 		public ResultBean GetAudioInfo(string url)
 		{
-			return ResultBean.Success(FileManager.GetAudioInfo(url));
+			return ResultBean.Success(fileManager.GetAudioInfo(url));
 		}
 	}
 }

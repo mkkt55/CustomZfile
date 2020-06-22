@@ -1,0 +1,8 @@
+CLR：主项目“依赖项”中引用，使用时引入其命名空间。
+
+COM：使用“regsvr32 xxxx.dll”对dll程序集进行注册，并在主项目“依赖项”中引用，使用时引入其命名空间。
+
+GAC：作为共享程序集，需要对项目进行签名，成为强命名程序集，然后使用Visual Studio Command Tool加入到全局缓存里，VS命令行的命令：gacutil /i xxxx.dll。使用时需用反射加载，如：System.Reflection.Assembly("GlobalAssemblyCustomZfile, Version=1.0.0.0, Culture=neutral, PublicKeyToken=747f6a76d53f4723")
+
+Win32Dll：复制生成的dll文件到主项目exe所在目录下，声明同名的extern函数进行调用。或在Runtime中使用[DllImport("Kernel32.dll")]中的——IntPtr LoadLibrary(string path)——函数加载dll后，再使用Kernel32.dll中的——IntPtr GetProcAddress(IntPtr hModule, string procName)——加载其函数到一个delegate中使用结束时需要Kernel32.dll中的——void FreeLibrary(IntPtr module)——释放加载的dll。
+

@@ -6,10 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="wwwroot\fileroot\0\newdirindrive0\**" />
-    <Content Remove="wwwroot\fileroot\0\newdirindrive0\**" />
-    <EmbeddedResource Remove="wwwroot\fileroot\0\newdirindrive0\**" />
-    <None Remove="wwwroot\fileroot\0\newdirindrive0\**" />
+    <Compile Remove="wwwroot\fileroot\2\newdirindrive0\**" />
+    <Content Remove="wwwroot\fileroot\2\newdirindrive0\**" />
+    <EmbeddedResource Remove="wwwroot\fileroot\2\newdirindrive0\**" />
+    <None Remove="wwwroot\fileroot\2\newdirindrive0\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -36,11 +36,10 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\fileroot\1\newdir in drive 1\" />
-    <Folder Include="wwwroot\fileroot\2\" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="wwwroot\fileroot\0\picture.jpeg" />
+    <None Include="wwwroot\fileroot\2\picture.jpeg" />
   </ItemGroup>
 
   <ItemGroup>

@@ -19,6 +19,7 @@ password varchar(100) default "",
 foreign key(creator_id) references user(id)
 );
 
+/*
 create table drive_allow_user(
 drive_id int,
 user_id int,
@@ -30,8 +31,12 @@ primary key (drive_id, user_id),
 foreign key (drive_id) references drive(id),
 foreign key (user_id) references user(id)
 );
+*/
 
 insert into user values(null, "root", "root", NOW());
 insert into user values(null, "guest", "guest", NOW());
-insert into drive values(null, "Default", "127.0.0.1", NOW(), 1, "");
-insert into drive_allow_user values(1, 2, 1, 1, 1, 1);
+insert into drive values(null, "Default Drive", "127.0.0.1", NOW(), 1, "");
+insert into drive values(null, "Gallery", "127.0.0.1", NOW(), 1, "");
+
+
+-- insert into drive_allow_user values(1, 2, 1, 1, 1, 1);

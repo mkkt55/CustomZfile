@@ -12,9 +12,9 @@ using ClrLibCustomZfile;
 
 namespace CustomZfile.Services
 {
-	public static class SystemManager
+	public class SystemManager
 	{
-		private static CustomZfileDbContext context = new CustomZfileDbContext();
+		private CustomZfileDbContext context = new CustomZfileDbContext();
 
 		public const string WwwRoot = "wwwroot";
 		public const string FileRoot = "fileroot";
@@ -24,73 +24,59 @@ namespace CustomZfile.Services
 
 		public static string StartTime { get; } = DateTime.Now.ToString("yyyy/MM/dd HH:mm");
 
-		private static SystemConfig systemConfig;
+		private SystemConfig systemConfig;
 
-		private static CustomZfileDbContext dbContext = new CustomZfileDbContext(); 
+		private CustomZfileDbContext dbContext = new CustomZfileDbContext(); 
 
-		static SystemManager()
+		public SystemManager()
 		{
 			systemConfig = new SystemConfig();
 		}
 
-		public static DriveConfig GetDriveConfigById(int id)
+		public DriveConfig GetDriveConfigById(int id)
 		{
 			return systemConfig.driveConfigs[id];
 		}
 
-		public static List<DriveConfig> ListAllDrives()
+		public List<DriveConfig> ListAllDrives()
 		{
-			DirectoryInfo dirInfo = new DirectoryInfo(BasePath);
 			List<DriveConfig> driveConfigs = new List<DriveConfig>();
 
-			int id = 0;
-			foreach (DirectoryInfo di in dirInfo.GetDirectories())
+			var result = (from d in context.drive select d).ToList();
+			foreach (Drive d in result)
 			{
-				driveConfigs.Add(new DriveConfig(id, di.Name, di.CreationTime));
-				id++;
+				driveConfigs.Add(new DriveConfig(d.id, d.name, d.creation_time));
 			}
 
 			return driveConfigs;
 		}
 
 		
-		public static int SaveNewDrive(string driveName, int userId)
+		public int SaveNewDrive(string driveName, int userId)
 		{
 			Drive newDrive = new Drive { name = driveName, creator_id = userId };
-			var re = context.drive.Add(newDrive);
+			var result = context.drive.Add(newDrive);
 			context.SaveChanges();
-			LocalFileManager.CreateDir(FileRoot + re.Entity.id.ToString());
-			return re.Entity.id;
+			LocalFileManager.CreateDir(FileRoot + result.Entity.id.ToString());
+			return result.Entity.id;
 		}
 
-		public static bool DeleteDriveById(int driveId, int userId)
+		public bool DeleteDriveById(int driveId)
 		{
-			if (!CheckDeletePermission(driveId, userId))
-			{
-				return false;
-			}
 			LocalFileManager.DelDir(FileRoot + driveId.ToString());
 			context.Remove(new Drive { id = driveId });
 			context.SaveChanges();
+			LocalFileManager.DelDir(FileRoot + driveId.ToString());
 			return true;
 		}
 
 
-		private static bool CheckDeletePermission(int driveId, int userId)
-		{
-			var entity = from d in context.drive
-						where d.id == driveId && d.creator_id == userId
-						select d;
-
-			return entity != null;
-		}
-
-		public static SystemConfig GetSystemConfig()
+		public SystemConfig GetSystemConfig()
 		{
 			return systemConfig;
 		}
 
-		public static User UserExist(string username, string password)
+		public User UserExist(string username, string password)
 		{
 			var user = (from u in context.user
 						where u.username == username && u.password == password
@@ -103,7 +89,7 @@ namespace CustomZfile.Services
 		}
 
 		// Implement by assembly in GAC.
-		public static string Encrypt(string str)
+		public string Encrypt(string str)
 		{
 			var asm = Assembly.Load(EncryptionAssemblyName);
 			Type t = asm.GetType("EncryptionLib.Encryption");

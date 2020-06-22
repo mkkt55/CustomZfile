@@ -17,6 +17,8 @@ namespace CustomZfile
     {
         private readonly RequestDelegate _next;
 
+        private SystemManager systemManager = new SystemManager();
+
         public AuthorizeMiddleware(RequestDelegate next)
         {
             _next = next;
@@ -27,7 +29,7 @@ namespace CustomZfile
             string username = context.Request.Cookies["username"];
             string password = context.Request.Cookies["password"];
 
-            if (username != null && password != null && null != SystemManager.UserExist(SystemManager.Decrypt(username), SystemManager.Decrypt(password)))
+            if (username != null && password != null && null != systemManager.UserExist(SystemManager.Decrypt(username), SystemManager.Decrypt(password)))
             {
                 await _next(context);
             }

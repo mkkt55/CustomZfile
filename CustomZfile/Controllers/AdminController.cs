@@ -13,10 +13,12 @@ namespace CustomZfile.Controllers
     [ApiController]
     public class AdminController : ControllerBase
     {
+        private SystemManager systemManager = new SystemManager();
+
         [HttpGet("config")]
         public ResultBean GetConfig()
         {
-            return ResultBean.Success(SystemManager.GetSystemConfig());
+            return ResultBean.Success(systemManager.GetSystemConfig());
         }
 
         [HttpGet("monitor")]
@@ -34,7 +36,11 @@ namespace CustomZfile.Controllers
         [HttpDelete("drive/{id}")]
         public ResultBean DeleteDrive(int id)
         {
-            return ResultBean.Success();
+            if (systemManager.DeleteDriveById(id))
+            {
+                return ResultBean.Success();
+            }
+            return ResultBean.Error("Deletion fail");
         }
 
         [HttpPost("update-pwd")]
@@ -54,11 +60,11 @@ namespace CustomZfile.Controllers
             var co = new CookieOptions();
             co.MaxAge = TimeSpan.FromDays(180);
             User u;
-            if (username != null && password != null && (u = SystemManager.UserExist(username, password)) != null)
+            if (username != null && password != null && (u = systemManager.UserExist(username, password)) != null)
             {
-                HttpContext.Response.Cookies.Append("userId", SystemManager.Encrypt(u.id.ToString()));
-                HttpContext.Response.Cookies.Append("username", SystemManager.Encrypt(username));
-                HttpContext.Response.Cookies.Append("password", SystemManager.Encrypt(password));
+                HttpContext.Response.Cookies.Append("userId", systemManager.Encrypt(u.id.ToString()));
+                HttpContext.Response.Cookies.Append("username", systemManager.Encrypt(username));
+                HttpContext.Response.Cookies.Append("password", systemManager.Encrypt(password));
                 return ResultBean.Success("登陆成功");
             }
             else

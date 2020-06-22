@@ -14,12 +14,13 @@ namespace CustomZfile.Controllers
     [ApiController]
     public class DriveManageController : ControllerBase
     {
+        private SystemManager systemManager = new SystemManager();
 
         [Route("/drives")]
         [HttpGet]
         public ResultBean DriveList()
 		{
-			return ResultBean.Success(SystemManager.ListAllDrives());
+			return ResultBean.Success(systemManager.ListAllDrives());
 		}
 
 
@@ -28,7 +29,7 @@ namespace CustomZfile.Controllers
         public ResultBean DriveItem(int id)
         {
             Console.WriteLine(id);
-            DriveConfig driveConfig = SystemManager.GetDriveConfigById(id);
+            DriveConfig driveConfig = systemManager.GetDriveConfigById(id);
             return ResultBean.Success(driveConfig);
         }
 
@@ -40,7 +41,7 @@ namespace CustomZfile.Controllers
             int userId;
             if (int.TryParse(SystemManager.Decrypt(HttpContext.Request.Cookies["userId"]), out userId))
             {
-                SystemManager.SaveNewDrive(driveConfig.name, userId);
+                systemManager.SaveNewDrive(driveConfig.name, userId);
                 return ResultBean.Success();
             }
             return ResultBean.Error("userId error");
@@ -53,7 +54,7 @@ namespace CustomZfile.Controllers
         {
             int userId;
             if (int.TryParse(SystemManager.Decrypt(HttpContext.Request.Cookies["userId"]), out userId)){
-                SystemManager.DeleteDriveById(id, userId);
+                systemManager.DeleteDriveById(id);
                 return ResultBean.Success();
             }
             return ResultBean.Error("userId error");

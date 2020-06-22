@@ -10,12 +10,12 @@ namespace CustomZfile.Services
 {
 	public class FileManager
 	{
-		public static FileItem GetFileItem(int driveId, string path)
+		public FileItem GetFileItem(int driveId, string path)
 		{
 			return new FileItem();
 		}
 
-		public static List<FileItem> ListFiles(int driveId, string path)
+		public List<FileItem> ListFiles(int driveId, string path)
 		{
 			if (path != "" && path.IndexOf("/") == 0)
 			{
@@ -56,7 +56,7 @@ namespace CustomZfile.Services
 			return returnedFiles;
 		}
 
-		public static AudioInfo GetAudioInfo(string url)
+		public AudioInfo GetAudioInfo(string url)
 		{
 			return new AudioInfo();
 		}

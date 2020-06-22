@@ -16,8 +16,15 @@ namespace CustomZfile.Models
 
         private delegate double DoubleVoidFunc();
 
-		//[DllImport("Win32Dll1.dll")]
-		//private extern static int GetNumCpu();
+        // Avoid getting wrong data at the first time.
+        static SystemMonitorInfo()
+        {
+            double m = GetFreeMemory();
+            m = GetTotalMemory();
+        }
+
+        //[DllImport("Win32Dll1.dll")]
+        //private extern static int GetNumCpu();
 
         private static double GetTotalMemory()
         {
