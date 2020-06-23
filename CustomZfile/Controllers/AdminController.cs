@@ -28,9 +28,25 @@ namespace CustomZfile.Controllers
         }
 
         [HttpPost("drive")]
-        public ResultBean EditDrive(Drive driveConfig)
+        public ResultBean EditDrive(DriveConfig driveConfig)
         {
-            return ResultBean.Success();
+            if (driveConfig.id == null)
+            {
+                int userId;
+                if (int.TryParse(SystemManager.Decrypt(HttpContext.Request.Cookies["userId"]), out userId))
+                {
+                    systemManager.SaveNewDrive(driveConfig.name, userId);
+                    return ResultBean.Success();
+                }
+            }
+            else
+            {
+                if (systemManager.EditDrive(driveConfig))
+                {
+                    return ResultBean.Success();
+                }
+            }
+            return ResultBean.Error("未知错误");
         }
 
         [HttpDelete("drive/{id}")]
@@ -40,13 +56,17 @@ namespace CustomZfile.Controllers
             {
                 return ResultBean.Success();
             }
-            return ResultBean.Error("Deletion fail");
+            return ResultBean.Error("删除失败");
         }
 
         [HttpPost("update-pwd")]
-        public ResultBean UpdatePwd(string username, string oldPassword, string rePassword)
+        public ResultBean UpdatePwd([FromForm] LoginForm loginForm)
         {
-            return ResultBean.Success();
+            if (systemManager.UpdatePassword(loginForm.username, loginForm.password, loginForm.newPassword))
+            {
+                return ResultBean.Success("密码修改成功");
+            }
+            return ResultBean.Error("原密码错误");
         }
 
 
@@ -62,9 +82,9 @@ namespace CustomZfile.Controllers
             User u;
             if (username != null && password != null && (u = systemManager.UserExist(username, password)) != null)
             {
-                HttpContext.Response.Cookies.Append("userId", systemManager.Encrypt(u.id.ToString()));
-                HttpContext.Response.Cookies.Append("username", systemManager.Encrypt(username));
-                HttpContext.Response.Cookies.Append("password", systemManager.Encrypt(password));
+                HttpContext.Response.Cookies.Append("userId", SystemManager.Encrypt(u.id.ToString()));
+                HttpContext.Response.Cookies.Append("username", SystemManager.Encrypt(username));
+                HttpContext.Response.Cookies.Append("password", SystemManager.Encrypt(password));
                 return ResultBean.Success("登陆成功");
             }
             else

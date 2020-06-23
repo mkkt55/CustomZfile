@@ -15,7 +15,7 @@ bool LocalFileManager::CopyFile(String^ origin, String^ target) {
 		return true;
 	}
 	else {
-		return true;
+		return false;
 	}
 }
 
@@ -29,7 +29,7 @@ bool LocalFileManager::CopyDir(String^ origin, String^ target) {
 		return true;
 	}
 	else {
-		return true;
+		return false;
 	}
 }
 
@@ -58,7 +58,7 @@ bool LocalFileManager::DelDir(String^ dirPath) {
 }
 
 bool LocalFileManager::CreateDir(String^ dirPath) {
-	if (_mkdir(CLRStringToChar(dirPath)))
+	if (_mkdir(CLRStringToChar(dirPath)) == 0)
 	{
 		return true;
 	}

@@ -16,14 +16,6 @@ namespace CustomZfile.Controllers
     {
         private SystemManager systemManager = new SystemManager();
 
-        [Route("/drives")]
-        [HttpGet]
-        public ResultBean DriveList()
-		{
-			return ResultBean.Success(systemManager.ListAllDrives());
-		}
-
-
 		[Route("/drives/{id}")]
         [HttpGet]
         public ResultBean DriveItem(int id)

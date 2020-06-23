@@ -7,7 +7,7 @@ namespace CustomZfile.Models
 {
 	public class DriveConfig
 	{
-		public int id { get; set; }
+		public int? id { get; set; }
 		public string name { get; set; }
 		public string creationTime { get; set; }
 

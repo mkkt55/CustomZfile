@@ -29,10 +29,13 @@ namespace CustomZfile
             string username = context.Request.Cookies["username"];
             string password = context.Request.Cookies["password"];
 
-            if (username != null && password != null && null != systemManager.UserExist(SystemManager.Decrypt(username), SystemManager.Decrypt(password)))
+            username = SystemManager.Decrypt(username);
+            password = SystemManager.Decrypt(password);
+
+            if (username != null && password != null && null != systemManager.UserExist(username, password))
             {
                 await _next(context);
-            }
+            } 
             else
             {
                 context.Response.StatusCode = 401;

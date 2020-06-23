@@ -14,8 +14,6 @@ namespace CustomZfile.Services
 {
 	public class SystemManager
 	{
-		private CustomZfileDbContext context = new CustomZfileDbContext();
-
 		public const string WwwRoot = "wwwroot";
 		public const string FileRoot = "fileroot";
 		public const string BasePath = "wwwroot/fileroot";
@@ -41,32 +39,55 @@ namespace CustomZfile.Services
 		public List<DriveConfig> ListAllDrives()
 		{
 			List<DriveConfig> driveConfigs = new List<DriveConfig>();
-
-			var result = (from d in context.drive select d).ToList();
-			foreach (Drive d in result)
+			using (var context = new CustomZfileDbContext())
 			{
-				driveConfigs.Add(new DriveConfig(d.id, d.name, d.creation_time));
+				var result = (from d in context.drive select d).ToList(); 
+				foreach (Drive d in result)
+				{
+					driveConfigs.Add(new DriveConfig(d.id, d.name, d.creation_time));
+				}
 			}
-
 			return driveConfigs;
 		}
 
+		public bool EditDrive(DriveConfig driveConfig)
+		{
+			using (var context = new CustomZfileDbContext())
+			{
+				Drive d = context.drive.Find(driveConfig.id);
+				if (d == null)
+				{
+					return false;
+				}
+				d.name = driveConfig.name;
+				context.drive.Update(d);
+				context.SaveChanges();
+			}
+			return true;
+		}
 		
 		public int SaveNewDrive(string driveName, int userId)
 		{
 			Drive newDrive = new Drive { name = driveName, creator_id = userId };
-			var result = context.drive.Add(newDrive);
-			context.SaveChanges();
-			LocalFileManager.CreateDir(FileRoot + result.Entity.id.ToString());
-			return result.Entity.id;
+			int id;
+			using (var context = new CustomZfileDbContext())
+			{
+				var result = context.drive.Add(newDrive);
+				context.SaveChanges();
+				id = result.Entity.id;
+			}
+			LocalFileManager.CreateDir(BasePath + "/" + id.ToString());
+			return id;
 		}
 
 		public bool DeleteDriveById(int driveId)
 		{
-			LocalFileManager.DelDir(FileRoot + driveId.ToString());
-			context.Remove(new Drive { id = driveId });
-			context.SaveChanges();
-			LocalFileManager.DelDir(FileRoot + driveId.ToString());
+			using (var context = new CustomZfileDbContext())
+			{
+				context.Remove(new Drive { id = driveId });
+				context.SaveChanges();
+			}
+			LocalFileManager.DelDir(BasePath + "/" + driveId.ToString());
 			return true;
 		}
 
@@ -76,20 +97,32 @@ namespace CustomZfile.Services
 			return systemConfig;
 		}
 
+		public bool UpdatePassword(string username, string password, string newPassword)
+		{
+			User u = UserExist(username, password);
+			if (u == null)
+			{
+				return false;
+			}
+			u.password = newPassword;
+			using (var context = new CustomZfileDbContext())
+			{
+				context.user.Update(u);
+				context.SaveChanges();
+			}
+			return true;
+		}
+
 		public User UserExist(string username, string password)
 		{
-			var user = (from u in context.user
-						where u.username == username && u.password == password
-						select u).ToList();
-			if (user.Count == 0)
+			using (var context = new CustomZfileDbContext())
 			{
-				return null;
+				return context.user.SingleOrDefault(user => user.username == username && user.password == password);
 			}
-			return user[0];
 		}
 
 		// Implement by assembly in GAC.
-		public string Encrypt(string str)
+		public static string Encrypt(string str)
 		{
 			var asm = Assembly.Load(EncryptionAssemblyName);
 			Type t = asm.GetType("EncryptionLib.Encryption");

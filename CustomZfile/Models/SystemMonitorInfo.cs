@@ -17,10 +17,10 @@ namespace CustomZfile.Models
         private delegate double DoubleVoidFunc();
 
         // Avoid getting wrong data at the first time.
-        static SystemMonitorInfo()
+        public SystemMonitorInfo()
         {
-            double m = GetFreeMemory();
-            m = GetTotalMemory();
+            double m = totalMemory + totalSpace;
+            Console.WriteLine(m);
         }
 
         //[DllImport("Win32Dll1.dll")]

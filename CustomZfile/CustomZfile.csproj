@@ -19,7 +19,7 @@
 
   <ItemGroup>
     <COMReference Include="ATLCustomZfileLib.dll">
-      <Guid>7d541341-0bda-4589-a922-ff6d7e92df65</Guid>
+      <Guid>510837bc-6004-4185-8ae8-d9383f5cb315</Guid>
       <VersionMajor>1</VersionMajor>
       <VersionMinor>0</VersionMinor>
       <WrapperTool>tlbimp</WrapperTool>
@@ -44,11 +44,10 @@
 
   <ItemGroup>
     <Reference Include="ClrLibCustomZfile">
-      <HintPath>..\..\DOTNETDLLs\CLR\ClrLibCustomZfile.dll</HintPath>
+      <HintPath>..\WinDLLs\CLR\ClrLibCustomZfile.dll</HintPath>
     </Reference>
     <Reference Include="GlobalAssemblyCustomZfile">
-      <HintPath>..\..\DOTNETDLLs\GAC\GlobalAssemblyCustomZfile.dll</HintPath>
-      <Private>true</Private>
+      <HintPath>..\WinDLLs\GAC\GlobalAssemblyCustomZfile.dll</HintPath>
     </Reference>
   </ItemGroup>
 

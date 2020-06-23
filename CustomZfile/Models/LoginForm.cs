@@ -9,5 +9,6 @@ namespace CustomZfile.Models
     {
         public string username { set; get; }
         public string password { set; get; }
+        public string newPassword { set; get; }
     }
 }

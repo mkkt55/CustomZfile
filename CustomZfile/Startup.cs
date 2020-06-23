@@ -27,7 +27,6 @@ namespace CustomZfile
 		public void ConfigureServices(IServiceCollection services)
 		{
 			services.AddControllers();
-			services.AddTransient<CustomZfileDbContext>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -39,7 +38,7 @@ namespace CustomZfile
 			}
 			
 			app.UseWhen(
-				c => c.Request.Path.Value.Contains("api") || c.Request.Path.Value.Contains("fileroot") || c.Request.Path.Value.Contains("admin"),
+				c => !c.Request.Path.Value.Contains("login"),
 				_ => _.UseMiddleware<AuthorizeMiddleware>());
 
 			app.UseHttpsRedirection();
