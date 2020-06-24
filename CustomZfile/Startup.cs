@@ -38,7 +38,7 @@ namespace CustomZfile
 			}
 			
 			app.UseWhen(
-				c => !c.Request.Path.Value.Contains("login"),
+				c => c.Request.Path.Value.Contains("api") || c.Request.Path.Value.Contains("admin")|| c.Request.Path.Value.Contains("fileroot"),
 				_ => _.UseMiddleware<AuthorizeMiddleware>());
 
 			app.UseHttpsRedirection();
